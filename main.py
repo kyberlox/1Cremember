@@ -25,22 +25,59 @@ app.add_middleware(
     allow_headers=["Content-Type", "Accept", "Location", "Allow", "Content-Disposition", "Sec-Fetch-Dest"],
 )
 
+
+
 @app.get("/")
 def root():
     return RedirectResponse("http://127.0.0.1:8000/static/menu.html")
+
+
 
 @app.get("/menu")
 def menu():
     wb = load_workbook('list.xlsx')
     sheet = wb['all']
 
-    HEADERS = ["ОГЛАВЛЕНИЕ"]
+    j=0
+    HEADERS = {j : "ОГЛАВЛЕНИЕ"}
     for i in range(2, sheet.max_row+1):
         header = sheet[f"A{i}"].value
         if header not in HEADERS:
-            HEADERS.append(header)
+            j+=1
+            HEADERS[j] = header
     
     return HEADERS
+
+
+
+@app.get("/search_by_name/{Id}")
+def byid(Id):
+    wb = load_workbook('list.xlsx')
+    sheet = wb['all']
+
+    j=0
+    HEADERS = {j : "ОГЛАВЛЕНИЕ"}
+    for i in range(2, sheet.max_row+1):
+        header = sheet[f"A{i}"].value
+        if header not in HEADERS:
+            j+=1
+            HEADERS[j] = header
+    
+    CARDS = []
+    for i in range(2, sheet.max_row+1):
+        nm = nm = sheet[f"A{i}"].value
+        name =  HEADERS[Id]
+        if (nm == name) or (name.lower() in nm.lower()):
+            card = {
+                "id" : i,
+                "name" : sheet[f"A{i}"].value,
+                "text" : sheet[f"B{i}"].value,
+                "img" : sheet[f"C{i}"].value
+            }
+            CARDS.append(card)
+    
+    return CARDS
+
     
 
 @app.get("/search_by_name/{name}")
@@ -52,7 +89,7 @@ def byname(name):
     CARDS = []
     for i in range(2, sheet.max_row+1):
         nm = sheet[f"A{i}"].value
-        if (sheet[f"A{i}"].value == name) or (name.lower() in nm.lower()):
+        if (nm == name) or (name.lower() in nm.lower()):
             card = {
                 "id" : i,
                 "name" : sheet[f"A{i}"].value,
