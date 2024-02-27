@@ -50,33 +50,34 @@ def menu():
 
 
 
-@app.get("/search_by_ID/{Id}")
-def byid(Id):
+@app.get("/menu_plus")
+def menu_plus():
     wb = load_workbook('list.xlsx')
     sheet = wb['all']
 
     j=0
-    HEADERS = {j : "ОГЛАВЛЕНИЕ"}
+    HEADERS = []
     for i in range(2, sheet.max_row+1):
         header = sheet[f"A{i}"].value
-        if header not in HEADERS.values():
+        if header not in HEADERS:
             j+=1
-            HEADERS[j] = header
+            HEADERS.append(header)
 
-    CARDS = []
-    for i in range(2, sheet.max_row+1):
-        nm = sheet[f"A{i}"].value
-        name =  HEADERS[int(Id)]
-        if (nm == name):# or (name.lower() in nm.lower()):
-            card = {
-                "id" : i,
-                "name" : sheet[f"A{i}"].value,
-                "text" : sheet[f"B{i}"].value,
-                "img" : sheet[f"C{i}"].value
-            }
-            CARDS.append(card)
+    MENU = dict()
+    for header in HEADERS:
+        MENU[header] = []
+        for i in range(2, sheet.max_row+1):
+            hdr = sheet[f"A{i}"].value
+            if (hdr == header):# or (hdr.lower() in header.lower()):
+                card = {
+                    "id" : i,
+                    "name" : sheet[f"A{i}"].value,
+                    "text" : sheet[f"B{i}"].value,
+                    "img" : sheet[f"C{i}"].value
+                }
+                MENU[header].append(card)
     
-    return CARDS
+    return MENU
 
     
 
