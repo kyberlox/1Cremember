@@ -42,7 +42,7 @@ def menu():
     HEADERS = {j : "ОГЛАВЛЕНИЕ"}
     for i in range(2, sheet.max_row+1):
         header = sheet[f"A{i}"].value
-        if header not in HEADERS:
+        if header not in HEADERS.values():
             j+=1
             HEADERS[j] = header
     
@@ -50,7 +50,7 @@ def menu():
 
 
 
-@app.get("/search_by_name/{Id}")
+@app.get("/search_by_ID/{Id}")
 def byid(Id):
     wb = load_workbook('list.xlsx')
     sheet = wb['all']
@@ -59,15 +59,15 @@ def byid(Id):
     HEADERS = {j : "ОГЛАВЛЕНИЕ"}
     for i in range(2, sheet.max_row+1):
         header = sheet[f"A{i}"].value
-        if header not in HEADERS:
+        if header not in HEADERS.values():
             j+=1
             HEADERS[j] = header
-    
+
     CARDS = []
     for i in range(2, sheet.max_row+1):
-        nm = nm = sheet[f"A{i}"].value
-        name =  HEADERS[Id]
-        if (nm == name) or (name.lower() in nm.lower()):
+        nm = sheet[f"A{i}"].value
+        name =  HEADERS[int(Id)]
+        if (nm == name):# or (name.lower() in nm.lower()):
             card = {
                 "id" : i,
                 "name" : sheet[f"A{i}"].value,
