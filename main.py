@@ -9,8 +9,8 @@ from openpyxl import Workbook
 
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory="public", html=True))
-app.mount("/static", StaticFiles(directory="/", html=True))
+#app.mount("/static", StaticFiles(directory="public", html=True))
+#app.mount("/static", StaticFiles(directory="/", html=True))
 
 origins = [
     "https://127.0.0.1:8000",
@@ -123,6 +123,8 @@ def bytext(text):
     return CARDS
 
 #в конце
-@app.get("/imgs/{file}")
+@app.get("img/{file}")
 def files(file: str):
-    return RedirectResponse(f"http://127.0.0.1:8000/imgs/{file}")
+    #/imgs/1_1.jpg
+    file = "/" + file
+    return FileResponse(file) 
