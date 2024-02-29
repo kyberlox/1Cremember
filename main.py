@@ -65,7 +65,7 @@ def menu_plus():
 
     j=0
     HEADERS = []
-    for i in range(2, sheet.max_row+1):
+    for i in range(2, 98):
         header = sheet[f"A{i}"].value
         if header not in HEADERS:
             j+=1
@@ -74,7 +74,7 @@ def menu_plus():
     MENU = dict()
     for header in HEADERS:
         MENU[header] = []
-        for i in range(2, sheet.max_row+1):
+        for i in range(2, 98):
             hdr = sheet[f"A{i}"].value
             if (hdr != None) and (hdr == header):# or (hdr.lower() in header.lower()):
                 card = {
