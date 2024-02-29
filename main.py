@@ -13,8 +13,9 @@ app = FastAPI()
 #app.mount("/static", StaticFiles(directory="/", html=True))
 
 origins = [
-    "https://127.0.0.1:8000",
-    "https://localhost:8000"
+    "https://6d55-176-15-251-130.ngrok-free.app"#,
+    #"https://127.0.0.1:8000",
+    #"https://localhost:8000"
 ]
 
 app.add_middleware(
@@ -27,9 +28,14 @@ app.add_middleware(
 
 
 
-@app.get("/")
+app.mount("/static", StaticFiles(directory="public", html=True))
+app.mount("/static", StaticFiles(directory="/", html=True))
+
+
+
+@app.get("/", response_class=HTMLResponse)
 def root():
-    return RedirectResponse("http://127.0.0.1:8000/static/menu.html")
+    return RedirectResponse("https://6d55-176-15-251-130.ngrok-free.app/static/menu.html")
 
 
 
@@ -117,6 +123,25 @@ def bytext(text):
                 "name" : sheet[f"A{i}"].value,
                 "text" : sheet[f"B{i}"].value,
                 "img" : sheet[f"C{i}"].value
+            }
+            CARDS.append(card)
+    
+    return CARDS
+
+@app.get("/application")
+def bytext(text):
+    text = "ПРИЛОЖЕНИЕ"
+    wb = load_workbook('list.xlsx')
+    sheet = wb['all']
+
+    CARDS = []
+    for i in range(2, sheet.max_row+1):
+        nm = sheet[f"A{i}"].value
+        if (sheet[f"A{i}"].value == text) or (text.lower() in nm.lower()):
+            card = {
+                "id" : i,
+                "name" : sheet[f"A{i}"].value,
+                "text" : sheet[f"B{i}"].value,
             }
             CARDS.append(card)
     
