@@ -12,8 +12,10 @@ app = FastAPI()
 #app.mount("/static", StaticFiles(directory="public", html=True))
 #app.mount("/static", StaticFiles(directory="/", html=True))
 
+link = "https://66b7-176-15-251-130.ngrok-free.app/"
+
 origins = [
-    "https://6d55-176-15-251-130.ngrok-free.app"#,
+    link#,
     #"https://127.0.0.1:8000",
     #"https://localhost:8000"
 ]
@@ -35,7 +37,7 @@ app.mount("/static", StaticFiles(directory="/", html=True))
 
 @app.get("/", response_class=HTMLResponse)
 def root():
-    return RedirectResponse("https://6d55-176-15-251-130.ngrok-free.app/static/menu.html")
+    return RedirectResponse(f"{link}static/menu.html")
 
 
 
@@ -74,7 +76,7 @@ def menu_plus():
         MENU[header] = []
         for i in range(2, sheet.max_row+1):
             hdr = sheet[f"A{i}"].value
-            if (hdr == header):# or (hdr.lower() in header.lower()):
+            if (hdr != None) and (hdr == header):# or (hdr.lower() in header.lower()):
                 card = {
                     "id" : i,
                     "name" : sheet[f"A{i}"].value,
@@ -96,7 +98,7 @@ def byname(name):
     CARDS = []
     for i in range(2, sheet.max_row+1):
         nm = sheet[f"A{i}"].value
-        if (nm == name) or (name.lower() in nm.lower()):
+        if (nm != None) and ((nm == name) or (name.lower() in nm.lower())):
             card = {
                 "id" : i,
                 "name" : sheet[f"A{i}"].value,
@@ -117,7 +119,7 @@ def bytext(text):
     for i in range(2, sheet.max_row+1):
         nm = sheet[f"A{i}"].value
         txt = sheet[f"B{i}"].value
-        if (sheet[f"A{i}"].value == text) or (text.lower() in nm.lower()) or (text.lower() in txt.lower()):
+        if (txt != None) and ((sheet[f"A{i}"].value == text) or (text.lower() in nm.lower()) or (text.lower() in txt.lower())):
             card = {
                 "id" : i,
                 "name" : sheet[f"A{i}"].value,
@@ -129,7 +131,7 @@ def bytext(text):
     return CARDS
 
 @app.get("/application")
-def bytext(text):
+def application():
     text = "ПРИЛОЖЕНИЕ"
     wb = load_workbook('list.xlsx')
     sheet = wb['all']
@@ -137,7 +139,7 @@ def bytext(text):
     CARDS = []
     for i in range(2, sheet.max_row+1):
         nm = sheet[f"A{i}"].value
-        if (sheet[f"A{i}"].value == text) or (text.lower() in nm.lower()):
+        if (nm != None) and ((sheet[f"A{i}"].value == text) or (text.lower() in nm.lower())):
             card = {
                 "id" : i,
                 "name" : sheet[f"A{i}"].value,
