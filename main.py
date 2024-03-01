@@ -12,7 +12,7 @@ app = FastAPI()
 #app.mount("/static", StaticFiles(directory="public", html=True))
 #app.mount("/static", StaticFiles(directory="/", html=True))
 
-link = "https://66b7-176-15-251-130.ngrok-free.app/"
+link = "https://36ad-217-118-90-182.ngrok-free.app/"
 
 origins = [
     link#,
@@ -120,10 +120,25 @@ def bytext(text):
         nm = sheet[f"A{i}"].value
         txt = sheet[f"B{i}"].value
         if (txt != None) and ((sheet[f"A{i}"].value == text) or (text.lower() in nm.lower()) or (text.lower() in txt.lower())):
+            Mesg = sheet[f"B{i}"].value
+            msg = msg.lower()
+
+            fnd = text.lower()
+            if msg.find(fnd) != -1:
+                print ("Подстрока найдена!")
+                
+                start_i = msg.find(fnd)
+                end_i = start_i + len(fnd)
+
+                Mesg = Mesg[: start_i] + "<b style='color: green'>" + Mesg[start_i : end_i] + "</b>" + Mesg[end_i :]
+                
+            else:
+                print ("Подстрока не найдена!")
+
             card = {
                 "id" : i,
                 "name" : sheet[f"A{i}"].value,
-                "text" : sheet[f"B{i}"].value,
+                "text" : Mesg,
                 "img" : sheet[f"C{i}"].value
             }
             CARDS.append(card)
