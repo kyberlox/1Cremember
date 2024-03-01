@@ -121,19 +121,22 @@ def bytext(text):
         txt = sheet[f"B{i}"].value
         if (txt != None) and ((sheet[f"A{i}"].value == text) or (text.lower() in nm.lower()) or (text.lower() in txt.lower())):
             Mesg = sheet[f"B{i}"].value
-            msg = msg.lower()
+            msg = Mesg.lower()
 
             fnd = text.lower()
-            if msg.find(fnd) != -1:
-                print ("Подстрока найдена!")
+            start_i = []
+            
+            while msg.find(fnd) != -1:
+                i = msg.find(fnd)
+                start_i.append(i)
+                msg = msg[:i] + msg[i+len(fnd):]
+            
+            if start_i != []:
+                for i in start_i:
+                    end_i = i + len(fnd)
+                    Mesg = Mesg[: i] + "<span class =\'target\'>" + Mesg[i : end_i] + "</span>" + Mesg[end_i :]
                 
-                start_i = msg.find(fnd)
-                end_i = start_i + len(fnd)
 
-                Mesg = Mesg[: start_i] + "<b style='color: green'>" + Mesg[start_i : end_i] + "</b>" + Mesg[end_i :]
-                
-            else:
-                print ("Подстрока не найдена!")
 
             card = {
                 "id" : i,
