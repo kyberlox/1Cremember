@@ -128,7 +128,7 @@ def bytext(text):
             
             while msg.find(fnd) != -1:
                 i = msg.find(fnd)
-                start_i.append(i)
+                start_i.append(i + len(fnd)*len(start_i))
                 msg = msg[:i] + msg[i+len(fnd):]
             
             if start_i != []:
