@@ -112,6 +112,32 @@ def byname(name):
     return CARDS
 
 
+def in_tags(s):
+    open_tags = []
+    frm = 0
+    while s.find("<", frm) != -1:
+        inx = s.find("<", frm)
+        open_tags.append(inx)
+        frm = inx + 1
+
+    close_tags = []
+    frm=0
+    while s.find(">", frm) != -1:
+        inx = s.find(">", frm)
+        close_tags.append(inx)
+        frm = inx + 1
+    
+    list_tag_index = []
+    for i in range(len(open_tags)):
+	    for j in range(open_tags[i], close_tags[i]+1):
+		    list_tag_index.append(j)
+    
+    if s.find("<style>") != -1:
+        for j in range(s.find("<style>"), s.find("</style>")+1):
+            if j not in list_tag_index:
+                list_tag_index.append(j)
+
+    return list_tag_index
 
 def add_tag(strg, adound):
     s = strg.lower()
@@ -124,14 +150,53 @@ def add_tag(strg, adound):
         index.append(inx)
         frm = inx + len(a)
 
+    ban = in_tags(strg)
     k=0
     for inx in index:
-        i = inx + k
-        strg = strg[: i] + "<span class =\'target\'>" + strg[i : i+len(a)] + "</span>" + strg[i+len(a) :]
-        k+=len("<span class =\'target\'>" + "</span>")
+        if inx not in ban:
+            i = inx + k
+            strg = strg[: i] + "<span class =\'target\'>" + strg[i : i+len(a)] + "</span>" + strg[i+len(a) :]
+            k+=len("<span class =\'target\'>" + "</span>")
 
     return strg
-    
+
+def ban(s):
+    banned = '''
+    <style>table.iksweb{
+	width: 100%;
+	border-collapse:collapse;
+	border-spacing:0;
+	height: auto;
+}
+table.iksweb,table.iksweb td, table.iksweb th {
+	border: 1px solid #595959;
+}
+table.iksweb td,table.iksweb th {
+	padding: 3px;
+	width: 30px;
+	height: 35px;
+}
+table.iksweb th {
+	background: #347c99; 
+	color: #fff; 
+	font-weight: normal;
+}</style><table class="iksweb">
+	<tbody><tr><th>
+
+    </th><th>
+    </th></tr>
+
+    </td>
+		</tr>
+	</tbody>
+</table>
+    '''
+    if s in banned:
+        return True
+    else:
+        return False
+
+
 @app.get("/search_by_text/{text}")
 def bytext(text):
     text = str(text)
@@ -143,7 +208,7 @@ def bytext(text):
     for i in range(2, sheet.max_row+1):
         nm = sheet[f"A{i}"].value
         txt = sheet[f"B{i}"].value
-        if (txt != None) and ((sheet[f"A{i}"].value == text) or (text.lower() in nm.lower()) or (text.lower() in txt.lower())):
+        if (txt != None) and ((sheet[f"A{i}"].value == text) or (text.lower() in nm.lower()) or (text.lower() in txt.lower())) and (not ban(text)):
             Mesg = sheet[f"B{i}"].value
             
             Mesg = add_tag(Mesg, text)
