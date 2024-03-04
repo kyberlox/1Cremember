@@ -12,7 +12,9 @@ app = FastAPI()
 #app.mount("/static", StaticFiles(directory="public", html=True))
 #app.mount("/static", StaticFiles(directory="/", html=True))
 
-link = "https://36ad-217-118-90-182.ngrok-free.app/"
+
+
+link = "https://6438-176-15-250-9.ngrok-free.app/"
 
 origins = [
     link#,
@@ -109,6 +111,27 @@ def byname(name):
     
     return CARDS
 
+
+
+def add_tag(strg, adound):
+    s = strg.lower()
+    a = adound.lower()
+
+    index = []
+    frm = 0
+    while s.find(a, frm) != -1:
+        inx = s.find(a, frm)
+        index.append(inx)
+        frm = inx + len(a)
+
+    k=0
+    for inx in index:
+        i = inx + k
+        strg = strg[: i] + "<span class =\'target\'>" + strg[i : i+len(a)] + "</span>" + strg[i+len(a) :]
+        k+=len("<span class =\'target\'>" + "</span>")
+
+    return strg
+    
 @app.get("/search_by_text/{text}")
 def bytext(text):
     text = str(text)
@@ -116,27 +139,14 @@ def bytext(text):
     sheet = wb['all']
 
     CARDS = []
+    start_i = []
     for i in range(2, sheet.max_row+1):
         nm = sheet[f"A{i}"].value
         txt = sheet[f"B{i}"].value
         if (txt != None) and ((sheet[f"A{i}"].value == text) or (text.lower() in nm.lower()) or (text.lower() in txt.lower())):
             Mesg = sheet[f"B{i}"].value
-            msg = Mesg.lower()
-
-            fnd = text.lower()
-            start_i = []
             
-            while msg.find(fnd) != -1:
-                i = msg.find(fnd)
-                start_i.append(i + len(fnd)*len(start_i))
-                msg = msg[:i] + msg[i+len(fnd):]
-            
-            if start_i != []:
-                for i in start_i:
-                    end_i = i + len(fnd)
-                    Mesg = Mesg[: i] + "<span class =\'target\'>" + Mesg[i : end_i] + "</span>" + Mesg[end_i :]
-                
-
+            Mesg = add_tag(Mesg, text)
 
             card = {
                 "id" : i,
@@ -157,7 +167,7 @@ def application():
     CARDS = []
     for i in range(2, sheet.max_row+1):
         nm = sheet[f"A{i}"].value
-        if (nm != None) and ((sheet[f"A{i}"].value == text) or (text.lower() in nm.lower())):
+        if (nm != None) and ((sheet[f"A{i}"].value == "СОКРАЩЕНИЯ") or (sheet[f"A{i}"].value == text) or (text.lower() in nm.lower())):
             card = {
                 "id" : i,
                 "name" : sheet[f"A{i}"].value,
